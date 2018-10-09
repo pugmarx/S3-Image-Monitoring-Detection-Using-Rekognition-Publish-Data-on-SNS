@@ -25,7 +25,7 @@
           }
         },
         "MemorySize": 128,
-        "Timeout": 60,
+        "Timeout": 100,
         "Policies": [
           {
             "SNSPublishMessagePolicy": {
