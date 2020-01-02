@@ -5,20 +5,20 @@
   "Resources": {
     "SNSTopic": {
       "Type": "AWS::SNS::Topic",
-	  "Properties" : {
-		"DisplayName" : "S3_Image_Labels_and_Text"
-		}
+	    "Properties" : {
+		  "DisplayName" : "S3_Image_Labels_and_Text"
+		  }
     },
     "S3Bucket": {
-      "Type": "AWS::S3::Bucket"		
+      "Type": "AWS::S3::Bucket"
     },
 	
     "PublishSNSTopicForS3": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
         "Handler": "SNS_Image_Labels_Rekognition_S3.lambda_handler",
-        "Runtime": "python3.6",
-        "CodeUri": "s3://sjalexaskillsvirginea/Code/SNS_Image_Labels_Rekognition_S3.zip",
+        "Runtime": "python3.7",
+        "CodeUri": "lambda/",
         "Environment": {
           "Variables": {
             "TOPIC_ARN": { "Ref" : "SNSTopic"  }			
@@ -37,9 +37,14 @@
               "TopicName": { "Fn::GetAtt" : [ "SNSTopic", "TopicName" ] }
             }
           },
-		  {
-		    "RekognitionDetectOnlyPolicy":{}	  
-		  }		 
+          {
+            "RekognitionDetectOnlyPolicy":{}	  
+          },
+          {
+            "S3CrudPolicy":{
+              "BucketName": "*"
+          }
+      }		 
 		],		       
         "Events": {
           "S3BucketEvent": {

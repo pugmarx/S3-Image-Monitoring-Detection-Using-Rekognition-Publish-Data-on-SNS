@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: S3_Image_Labels_and_Text
+  S3Bucket:
+    Type: AWS::S3::Bucket
+  PublishSNSTopicForS3:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: SNS_Image_Labels_Rekognition_S3.lambda_handler
+      Runtime: python3.7
+      CodeUri: s3://calvinsamex3/6e49bbe5290f1a95077fcbe901ad93d9
+      Environment:
+        Variables:
+          TOPIC_ARN:
+            Ref: SNSTopic
+      MemorySize: 128
+      Timeout: 100
+      Policies:
+      - SNSPublishMessagePolicy:
+          TopicName:
+            Fn::GetAtt:
+            - SNSTopic
+            - TopicName
+      - SNSCrudPolicy:
+          TopicName:
+            Fn::GetAtt:
+            - SNSTopic
+            - TopicName
+      - RekognitionDetectOnlyPolicy: {}
+      - S3CrudPolicy:
+          BucketName: '*'
+      Events:
+        S3BucketEvent:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: S3Bucket
+            Events:
+            - s3:ObjectCreated:*
