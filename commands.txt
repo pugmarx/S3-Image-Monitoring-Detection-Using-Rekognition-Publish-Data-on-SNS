@@ -1,0 +1,13 @@
+aws s3 mb s3://samexample3
+
+sam package --template-file template.json --output-template-file package.yaml --s3-bucket samexample3
+
+sam deploy -t package.yaml --stack-name imagerekog --capabilities CAPABILITY_IAM
+
+aws s3 cp images/sad.jpg s3://imagerekog-s3bucket-1pg7o9rqwo5lt
+aws s3 cp images/excited.jpg s3://imagerekog-s3bucket-1pg7o9rqwo5lt
+aws s3 cp images/cc.png s3://imagerekog-s3bucket-1pg7o9rqwo5lt
+
+aws cloudformation describe-stacks --stack-name imagerekog --query "Stacks[0].Outputs[1].OutputValue"
+
+aws cloudformation delete-stack --stack-name imagerekog
